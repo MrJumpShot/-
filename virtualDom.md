@@ -338,6 +338,7 @@ function diffChildren(newVDom, parent) {
         } 
         // 如果没有key字段，则找一个类型相同的元素出来做比较
         else if (min < nodesWithoutKeyCount) {
+            // 个人觉得此处的j = 0是不是应该改成j = min，这样min的存在才有优化的意义，相当于缩小了每次遍历的范围，而且对于顺序没有发生变化的情况优化更明显
             for (let j = 0; j < nodesWithoutKeyCount; j++) {
                 const node = nodesWithoutKey[j];
                 if (node !== undefined && isSameType(node, vChild)) {
