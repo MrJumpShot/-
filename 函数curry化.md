@@ -2,8 +2,6 @@
 
 > 关于函数curry化的定义：
 
-
-
 1. 泛化的curry化
 ```
     let sum=function () {
