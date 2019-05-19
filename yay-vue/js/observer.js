@@ -14,6 +14,7 @@ class Observer {
     defineReactive(data, key, val) {
         this.observe(data);
         let dep = new Dep();
+        // 使用这样的方式来劫持数据getter，setter是没办法监听新增属性的，解决方法是使用proxy，他可以对新增的属性也作出响应
         Object.defineProperty(
             data, key, {
                 enumerable: true,
