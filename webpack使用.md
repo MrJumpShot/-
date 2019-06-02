@@ -156,6 +156,7 @@
             presets: [
                 '@babel/preset-env',
                 '@babel/preset-react'
+                // 使用react必须配置的presets项
             ],
             plugins: [
                 ["@babel/plugin-proposal-decorators", { "legacy": true }], // 装饰器语法
@@ -165,3 +166,5 @@
             ]
         }
     ```
+    终于可以摆脱脚手架了。。。。。
+
