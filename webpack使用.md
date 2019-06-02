@@ -119,3 +119,49 @@
         }
     ```
     因为不写`pathRewrite`时，相当于`webpack`认出了`/api/gank`开头的内容，知道需要代理到`http://gank.io/api`，但是问题在于，`webpack`只是简单的把请求的`/api/ganhuo/xiandu/categories`拼接到了`http://gank.io/api`后面，最后请求的目标就是`http://gank.io/api/api/ganhuo/xiandu/categories`，很明显是不对的，所以需要写一个`pathRewrite`
+
+13. 使用`typescript`时需要在根目录下创建一个`tsconfig.js`的文件
+
+14. 关于.babelrc的配置
+    * 直接在webpack.config.js中配置options
+    * 创建.babelrc文件，在该文件中配置
+    * 注意二者取其一就行了，当然也可以两者互补，只要两者合并起来能满足配置需求即可
+
+    在webpack.config.js中的配置是这样的：
+    ```
+        {
+            test: /\.js$/, // normal 普通的 loader
+            use: {
+                loader: 'babel-loader',
+                options: { // 用babel-loader 需要把 es6 -> es5
+                    presets: [
+                        '@babel/preset-env',
+                        '@babel/preset-react'
+                    ],
+                    plugins: [
+                        ["@babel/plugin-proposal-decorators", { "legacy": true }], // 装饰器语法
+                        ["@babel/plugin-proposal-class-properties", { "loose": true }], // 支持 class 语法
+                        "@babel/plugin-transform-runtime", // 运行时，支持 promise 或 gen*
+                        "@babel/plugin-syntax-dynamic-import", // 支持 import then 语法
+                    ]
+                }
+            },
+            include: path.resolve(__dirname, '../src'), // 指定为 src 文件
+            exclude: /node_modules/, // 排除 node_modules
+        }
+    ```
+    在.babelrc中的配置是这样的：
+    ```
+        {
+            presets: [
+                '@babel/preset-env',
+                '@babel/preset-react'
+            ],
+            plugins: [
+                ["@babel/plugin-proposal-decorators", { "legacy": true }], // 装饰器语法
+                ["@babel/plugin-proposal-class-properties", { "loose": true }], // 支持 class 语法
+                "@babel/plugin-transform-runtime", // 运行时，支持 promise 或 gen*
+                "@babel/plugin-syntax-dynamic-import", // 支持 import then 语法
+            ]
+        }
+    ```
