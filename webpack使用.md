@@ -204,3 +204,19 @@
         }
     ```
     如果不抽离css文件那么所有的css样式内容都会在打包后被放在bundle.js文件中，造成的结果就是bundle.js文件内容过大，如果是一个单页应用的话，需要花更多的时间去下载bundle.js，首屏体验就不好，抽离css文件的作用应该就是这个，将css样式的内容抽离出css文件，通过link标签引入index.html中，这样在下载css内容的时候可以继续构建DOM树也可以继续下载后面的bundle.js，阻塞的只是DOM的渲染和bundle.js的执行，总体来说是提升了性能的。
+
+17. optimize-css-assets-webpack-plugin
+    这个插件用于对css资源进行压缩，食用方式是在optimization里面进行配置
+    ```
+        const OptimizeCss = require('optimize-css-assets-webpack-plugin')
+        const Uglify = require('uglifyjs-webpack-plugin')
+
+        mode: 'production',
+        optimization: {
+            minimizer: [
+                new OptimizeCss(),
+                new Uglify(),
+            ],
+        },
+    ```
+    注意：虽然mode已经设置为production，但是使用了optimize-css-assets-webpack-plugin插件之后如果不使用uglifyjs插件的话js文件将无法压缩，展现出来的是和development模式是一样的，当然如果设置的是development模式的话，即使使用了uglifyjs插件也无法压缩。
