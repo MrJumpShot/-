@@ -220,3 +220,11 @@
         },
     ```
     注意：虽然mode已经设置为production，但是使用了optimize-css-assets-webpack-plugin插件之后如果不使用uglifyjs插件的话js文件将无法压缩，展现出来的是和development模式是一样的，当然如果设置的是development模式的话，即使使用了uglifyjs插件也无法压缩。
+
+18. externals配置
+    譬如通过<script></script>标签引入了jQuery的CDN，此时在文件中使用$或者window.$都可以直接使用jQuery，也不需打包进bundle.js，但是如果此时又写了import $ from 'jquery'（纯属为了看着顺眼）;的话，jQuery又会被打包进bundle.js，为了避免这样的情况（不用引入的情况偏偏引入了，又不想打包），可以通过配置externals属性来忽略一些不需要打包的内容
+    ```
+        externals: {
+            jquery: '$',
+        }
+    ```
