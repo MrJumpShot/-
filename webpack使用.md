@@ -168,3 +168,39 @@
     ```
     终于可以摆脱脚手架了。。。。。*(幼稚的想法)
 
+15. hash、chunkhash和contenthash的配置
+    * hash 计算是跟整个项目的构建相关，也就是说如果配置的是hash，那么只要项目中一个文件发生变化，那么所有的hash都会发生变化，这对缓存来说是一种浪费，使用hash时所有的hash值都是一样的，发生变化时一起变化
+    * chunkhash 就是解决上面这个问题的，它根据不同的入口文件(Entry)进行依赖文件解析、构建对应的 chunk，生成对应的哈希值。即一个chunk里面修改的内容不会影响到另一个chunk，只有自己这个chunk的chunkhash会发生变化
+    * 我们更近一步，index.js 和 index.css 同为一个 chunk（index.css是同一个chunk里面抽出来的），如果 index.js 内容发生变化，但是 index.css 没有变化，打包后他们的 hash 都发生变化，这对 css 文件来说是一种浪费。如何解决这个问题呢？contenthash 将根据资源内容创建出唯一 hash，也就是说文件内容不变，hash 就不变。
+
+16. mini-css-extract-plugin的使用姿势：
+    * 先是装包，在plugins里面new出来一个实例
+    ```
+        new MiniCssExtractPlugin({
+            filename: 'index.[contenthash:8].css'
+            // 使用contenthash的好处见上一条
+        }),
+    ```
+    * 修改rules里面的配置，现在不是用style-loader了，而是要利用mini-css-extract-plugin提供的loader
+    ```
+        {
+            test: /\.scss$/,
+            use: [
+                // 这里替换了原来的style-loader
+                { 
+                    loader: MiniCssExtractPlugin.loader,
+                    options: {
+                        hmr: true,
+                        reloadAll: true
+                    }
+                }, 
+                {
+                    loader: 'css-loader',
+                    options: {
+                        modules: true
+                    }
+                }, 
+            'sass-loader', 'postcss-loader'],
+        }
+    ```
+    如果不抽离css文件那么所有的css样式内容都会在打包后被放在bundle.js文件中，造成的结果就是bundle.js文件内容过大，如果是一个单页应用的话，需要花更多的时间去下载bundle.js，首屏体验就不好，抽离css文件的作用应该就是这个，将css样式的内容抽离出css文件，通过link标签引入index.html中，这样在下载css内容的时候可以继续构建DOM树也可以继续下载后面的bundle.js，阻塞的只是DOM的渲染和bundle.js的执行，总体来说是提升了性能的。
