@@ -12,6 +12,19 @@ element的出现是为了解决面向对象的UI编程的痛点，以往着这�
 
 我们在写React时一般是采用jsx的形式，这时返回的其实就是元素描述树，组织起来就是一颗virtual DOM tree，当setState的时候，React得到一颗新的virtual DOM tree，此时调用diff算法计算得到新的virtual DOM tree与旧树之间的差异，并根据计算出来的差异对DOM树进行patch操作，这样就得到了一棵全新的DOM tree，页面也就得到了需要展示的新内容。在这个过程中，不需要React使用者去做任何DOM节点的操作，只需要管理好数据变化即可，UI编程变得优美。
 
+React之所以这样做，一方面是使React用户尽量少地写代码，由框架来替用户完成那些操作，另一方面，element tree是js对象树，对它的操作是很轻量级的，不像对真实DOM树的操作那样重，采用element之后大大提升了操作了效率。
+
+```
+    // React.render的内容其实就是一棵元素描述树，也就数一棵virtual DOM tree
+    ReactDOM.render({
+        type: Form,
+        props: {
+            isSubmitted: false,
+            buttonText: 'OK!'
+        }
+    }, document.getElementById('root'))
+```
+
 ## component
 
 component是我们编写出来的自定义组件，React可以通过React.createElement函数来得到一个元素描述树。
