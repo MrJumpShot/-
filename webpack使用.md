@@ -122,12 +122,12 @@
 
 13. 使用`typescript`时需要在根目录下创建一个`tsconfig.js`的文件
 
-14. 关于.babelrc的配置
-    * 直接在webpack.config.js中配置options
-    * 创建.babelrc文件，在该文件中配置
+14. 关于`.babelrc`的配置
+    * 直接在`webpack.config.js`中配置`options`
+    * 创建`.babelrc`文件，在该文件中配置
     * 注意二者取其一就行了，当然也可以两者互补，只要两者合并起来能满足配置需求即可
 
-    在webpack.config.js中的配置是这样的：
+    在`webpack.config.js`中的配置是这样的：
     ```
         {
             test: /\.js$/, // normal 普通的 loader
@@ -150,7 +150,7 @@
             exclude: /node_modules/, // 排除 node_modules
         }
     ```
-    在.babelrc中的配置是这样的：
+    在`.babelrc`中的配置是这样的：
     ```
         {
             presets: [
@@ -168,20 +168,20 @@
     ```
     终于可以摆脱脚手架了。。。。。*(幼稚的想法)
 
-15. hash、chunkhash和contenthash的配置
-    * hash 计算是跟整个项目的构建相关，也就是说如果配置的是hash，那么只要项目中一个文件发生变化，那么所有的hash都会发生变化，这对缓存来说是一种浪费，使用hash时所有的hash值都是一样的，发生变化时一起变化
-    * chunkhash 就是解决上面这个问题的，它根据不同的入口文件(Entry)进行依赖文件解析、构建对应的 chunk，生成对应的哈希值。即一个chunk里面修改的内容不会影响到另一个chunk，只有自己这个chunk的chunkhash会发生变化
-    * 我们更近一步，index.js 和 index.css 同为一个 chunk（index.css是同一个chunk里面抽出来的），如果 index.js 内容发生变化，但是 index.css 没有变化，打包后他们的 hash 都发生变化，这对 css 文件来说是一种浪费。如何解决这个问题呢？contenthash 将根据资源内容创建出唯一 hash，也就是说文件内容不变，hash 就不变。
+15. `hash`、`chunkhash`和`contenthash`的配置
+    * `hash` 计算是跟整个项目的构建相关，也就是说如果配置的是`hash`，那么只要项目中一个文件发生变化，那么所有的`hash`都会发生变化，这对缓存来说是一种浪费，使用`hash`时所有的`hash`值都是一样的，发生变化时一起变化
+    * `chunkhash` 就是解决上面这个问题的，它根据不同的入口文件(`Entry`)进行依赖文件解析、构建对应的 `chunk`，生成对应的哈希值。即一个`chunk`里面修改的内容不会影响到另一个`chunk`，只有自己这个`chunk`的`chunkhash`会发生变化
+      * 我们更近一步，`index.js` 和 `index.css` 同为一个 `chunk`（`index.css`是同一个`chunk`里面抽出来的），如果 `index.js` 内容发生变化，但是 `index.css` 没有变化，打包后他们的 `hash` 都发生变化，这对 `css` 文件来说是一种浪费。如何解决这个问题呢？`contenthash` 将根据资源内容创建出唯一 `hash`，也就是说文件内容不变，hash 就不变。
 
-16. mini-css-extract-plugin的使用姿势：
-    * 先是装包，在plugins里面new出来一个实例
+16. `mini-css-extract-plugin`的使用姿势：
+    * 先是装包，在`plugins`里面`new`出来一个实例
     ```
         new MiniCssExtractPlugin({
             filename: 'index.[contenthash:8].css'
             // 使用contenthash的好处见上一条
         }),
     ```
-    * 修改rules里面的配置，现在不是用style-loader了，而是要利用mini-css-extract-plugin提供的loader
+    * 修改`rules`里面的配置，现在不是用`style-loader`了，而是要利用`mini-css-extract-plugin`提供的`loader`
     ```
         {
             test: /\.scss$/,
@@ -203,10 +203,10 @@
             'sass-loader', 'postcss-loader'],
         }
     ```
-    如果不抽离css文件那么所有的css样式内容都会在打包后被放在bundle.js文件中，造成的结果就是bundle.js文件内容过大，如果是一个单页应用的话，需要花更多的时间去下载bundle.js，首屏体验就不好，抽离css文件的作用应该就是这个，将css样式的内容抽离出css文件，通过link标签引入index.html中，这样在下载css内容的时候可以继续构建DOM树也可以继续下载后面的bundle.js，阻塞的只是DOM的渲染和bundle.js的执行，总体来说是提升了性能的。
+    如果不抽离`css`文件那么所有的`css`样式内容都会在打包后被放在`bundle.js`文件中，造成的结果就是`bundle.js`文件内容过大，如果是一个单页应用的话，需要花更多的时间去下载`bundle.js`，首屏体验就不好，抽离`css`文件的作用应该就是这个，将`css`样式的内容抽离出`css`文件，通过`link`标签引入`index.html`中，这样在下载`css`内容的时候可以继续构建`DOM`树也可以继续下载后面的`bundle.js`，阻塞的只是`DOM`的渲染和`bundle.js`的执行，总体来说是提升了性能的。
 
-17. optimize-css-assets-webpack-plugin
-    这个插件用于对css资源进行压缩，食用方式是在optimization里面进行配置
+17. `optimize-css-assets-webpack-plugin`
+    这个插件用于对`css`资源进行压缩，食用方式是在`optimization`里面进行配置
     ```
         const OptimizeCss = require('optimize-css-assets-webpack-plugin')
         const Uglify = require('uglifyjs-webpack-plugin')
@@ -219,12 +219,73 @@
             ],
         },
     ```
-    注意：虽然mode已经设置为production，但是使用了optimize-css-assets-webpack-plugin插件之后如果不使用uglifyjs插件的话js文件将无法压缩，展现出来的是和development模式是一样的，当然如果设置的是development模式的话，即使使用了uglifyjs插件也无法压缩。
+    注意：虽然`mode`已经设置为`production`，但是使用了`optimize-css-assets-webpack-plugin`插件之后如果不使用`uglifyjs`插件的话`js`文件将无法压缩，展现出来的是和`development`模式是一样的，当然如果设置的是`development`模式的话，即使使用了`uglifyjs`插件也无法压缩。
 
-18. externals配置
-    譬如通过<script></script>标签引入了jQuery的CDN，此时在文件中使用$或者window.$都可以直接使用jQuery，也不需打包进bundle.js，但是如果此时又写了import $ from 'jquery'（纯属为了看着顺眼）;的话，jQuery又会被打包进bundle.js，为了避免这样的情况（不用引入的情况偏偏引入了，又不想打包），可以通过配置externals属性来忽略一些不需要打包的内容
+18. `externals`配置
+    譬如通过`<script></script>`标签引入了`jQuery`的`CDN`，此时在文件中使用`$`或者`window.$`都可以直接使用`jQuery`，也不需打包进`bundle.js`，但是如果此时又写了`import $ from 'jquery'`（纯属为了看着顺眼）;的话，`jQuery`又会被打包进`bundle.js`，为了避免这样的情况（不用引入的情况偏偏引入了，又不想打包），可以通过配置`externals`属性来忽略一些不需要打包的内容
     ```
         externals: {
             jquery: '$',
         }
     ```
+
+19. 在处理图片时，有三种情况
+    * 在js文件中创建img，然后添加进DOM tree
+        ```
+            import imgSrc from './a.jpg';
+            const image = new Image()
+            image.src = imgSrc
+        ```
+    * 在css文件中作为background使用
+        ```
+        {
+            backgroung: url('./a.jpg');
+            // 此时不需要先引入，是因为css-loader已经做了这一步操作
+        }
+    * 在html文件中直接使用
+        ```
+            <img src='./a.jpg' />
+        ```
+        为了将该src转化为图片打包后的地址，使用一个loader：html-withimg-loader
+        ```
+            {
+                test: /\.html$/,
+                loader: 'html-withimg-loader'
+            }
+        ```
+    > 注意：在配置webpack.config.js时可以像下面这样配置，但是虽然我们只使用了url-loader，但是需要同时装包file-loader，因为由于limit的限制，当图片文件大于200K时会使用file-loader打包出一个图片文件放在build文件夹下，图片大小小于limit限制时是以base64的形式打包进bundle.js文件，也就是说url-loader里面可能会使用到file-loader，这样做的目的也是为了防止bundle.js文件过大。
+
+        ```
+            {
+                test: /\.(jpg|png|gif)$/,
+                use: {
+                    loader: 'url-loader',
+                    options: {
+                        limit: 200*1024,
+                        outputPath: 'img/'
+                        // 会在build目录下创建一个img目录
+                    }
+                }
+            },
+        ```
+20. 关于`publicPath`的配置，这是代码上线后将资源托管在`CDN`服务器上，此时`html`文件中引入各个`bundle.js`文件不再是本地引入，而是要去`CDN`服务器上引入，如果继续写成`./bundle.js`就无法获取到资源，所以就要给所有的引入路径添加上一个公共的路径，譬如说放在`http://www.navyblue.com/`的`CDN`服务器上，那么`publicPath`就设置为`http://www.navyblue.com/`，这时候在`html`引入`bundle.js`的时候就会自动去引入`http://www.navyblue.com/bundle.js`。如果在`output`中配置`publicPath`那么打包出来的所有结果被引入时都会加上公共路径，如果想单独配置，譬如说只给图片加，那么就可以在`url-loader`的`options`里面配置
+        ```
+            {
+                test: /\.(jpg|png|gif)$/,
+                use: {
+                    loader: 'url-loader',
+                    options: {
+                        limit: 200*1024,
+                        outputPath: 'img/',
+                        // 会在build目录下创建一个img目录
+                        publicPath: 'http://www.navyblue.com/'
+                    }
+                }
+            },
+        ```
+
+21. 关于`chunk`、`bundle`、`module`的区别：
+    * `module`好理解，就是需要被打包的一个个模块
+    * `bundle`就是打包出来的一个个`js`文件
+    * `chunk`：一个`entrypoint`进去以后，根据各种依赖关系形成一大个`chunk`，如果在打包一个`chunk`的过程中需要分割代码，那么分割完最后得到的一个个包就是`bundle`。
+
