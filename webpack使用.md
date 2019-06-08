@@ -96,6 +96,7 @@
     * `import`命令输入的变量都是只读的，因为它的本质是输入接口。也就是说，不允许在加载模块的脚本里面，改写接口。但是如果`import`进来的是一个对象，那么改变属性是可以做到的，但是极力不推荐这么做，因为会影响到其他使用该变量的模块。
     * `export`语句输出的接口，与其对应的值是动态绑定关系，即通过该接口，可以取到模块内部实时的值。
     * `import`语句是应该写在顶层作用域的，（否则会报错）只有这样才可以支持静态分析，但是可以通过`polyfill`的方式来支持在块作用域内使用`import`。
+    * 只有在`production`模式下`tree-shaking`才会生效，而且像lodash这样的模块即使使用`import { chunk } from lodash`也是无法生效`tree-shaking`的，要使用相应的`es6`模块，即`lodash-es`。注意：即使使用了`lodash-es`，如果是`lazy-loading`模式，即`import('lodash-es').then()`也是无法`tree-shaking`的，因为此时引入的整个的对象。
 
 12. 关于配置`proxy`的坑：
     ```
@@ -230,30 +231,30 @@
     ```
 
 19. 在处理图片时，有三种情况
-    * 在js文件中创建img，然后添加进DOM tree
+    * 在`js`文件中创建`img`，然后添加进`DOM tree`
         ```
             import imgSrc from './a.jpg';
             const image = new Image()
             image.src = imgSrc
         ```
-    * 在css文件中作为background使用
+    * 在`css`文件中作为`background`使用
         ```
         {
             backgroung: url('./a.jpg');
             // 此时不需要先引入，是因为css-loader已经做了这一步操作
         }
-    * 在html文件中直接使用
+    * 在`html`文件中直接使用
         ```
             <img src='./a.jpg' />
         ```
-        为了将该src转化为图片打包后的地址，使用一个loader：html-withimg-loader
+        为了将该`src`转化为图片打包后的地址，使用一个`loader`：`html-withimg-loader`
         ```
             {
                 test: /\.html$/,
                 loader: 'html-withimg-loader'
             }
         ```
-    > 注意：在配置webpack.config.js时可以像下面这样配置，但是虽然我们只使用了url-loader，但是需要同时装包file-loader，因为由于limit的限制，当图片文件大于200K时会使用file-loader打包出一个图片文件放在build文件夹下，图片大小小于limit限制时是以base64的形式打包进bundle.js文件，也就是说url-loader里面可能会使用到file-loader，这样做的目的也是为了防止bundle.js文件过大。
+    > 注意：在配置`webpack.config.js`时可以像下面这样配置，但是虽然我们只使用了`url-loader`，但是需要同时装包`file-loader`，因为由于`limit`的限制，当图片文件大于`200K`时会使用`file-loader`打包出一个图片文件放在`build`文件夹下，图片大小小于`limit`限制时是以`base64`的形式打包进`bundle.js`文件，也就是说`url-loader`里面可能会使用到`file-loader`，这样做的目的也是为了防止`bundle.js`文件过大，另一个原因是图片过大时编码需要的时间较长，影响打包的速度。但是如果图片较多，会发很多 `http` 请求，会降低页面性能，所以当图片体积较小时 `url-loader` 会将引入的图片编码，转为 `base64` 字符串。再把这串字符打包到文件中，最终只需要引入这个文件就能访问图片了，节省了图片请求。
 
         ```
             {
@@ -268,7 +269,7 @@
                 }
             },
         ```
-20. 关于`publicPath`的配置，这是代码上线后将资源托管在`CDN`服务器上，此时`html`文件中引入各个`bundle.js`文件不再是本地引入，而是要去`CDN`服务器上引入，如果继续写成`./bundle.js`就无法获取到资源，所以就要给所有的引入路径添加上一个公共的路径，譬如说放在`http://www.navyblue.com/`的`CDN`服务器上，那么`publicPath`就设置为`http://www.navyblue.com/`，这时候在`html`引入`bundle.js`的时候就会自动去引入`http://www.navyblue.com/bundle.js`。如果在`output`中配置`publicPath`那么打包出来的所有结果被引入时都会加上公共路径，如果想单独配置，譬如说只给图片加，那么就可以在`url-loader`的`options`里面配置
+1.  关于`publicPath`的配置，这是代码上线后将资源托管在`CDN`服务器上，此时`html`文件中引入各个`bundle.js`文件不再是本地引入，而是要去`CDN`服务器上引入，如果继续写成`./bundle.js`就无法获取到资源，所以就要给所有的引入路径添加上一个公共的路径，譬如说放在`http://www.navyblue.com/`的`CDN`服务器上，那么`publicPath`就设置为`http://www.navyblue.com/`，这时候在`html`引入`bundle.js`的时候就会自动去引入`http://www.navyblue.com/bundle.js`。如果在`output`中配置`publicPath`那么打包出来的所有结果被引入时都会加上公共路径，如果想单独配置，譬如说只给图片加，那么就可以在`url-loader`的`options`里面配置
         ```
             {
                 test: /\.(jpg|png|gif)$/,
@@ -284,8 +285,99 @@
             },
         ```
 
-21. 关于`chunk`、`bundle`、`module`的区别：
+2.  关于`chunk`、`bundle`、`module`的区别：
     * `module`好理解，就是需要被打包的一个个模块
     * `bundle`就是打包出来的一个个`js`文件
     * `chunk`：一个`entrypoint`进去以后，根据各种依赖关系形成一大个`chunk`，如果在打包一个`chunk`的过程中需要分割代码，那么分割完最后得到的一个个包就是`bundle`。
 
+3.  关于`html-webpack-plugin`的使用: 对于多页应用需要new多个`plugin`出来
+    ```
+        new HtmlWebpackPlugin({
+            template: './src/index.html',
+            minify: {
+                removeAttributeQuotes: true,
+            },
+            filename: 'home.html',
+            // filename是打包结束后输出的html文件名
+            chunks: ['main'],
+            // chunks是指该html需要引入的js文件，里面的`main`其实就是一个entrypoint，因为一个entrypoint对应的就是一个chunk
+        }),
+        new HtmlWebpackPlugin({
+            template: './src/index.html',
+            minify: {
+                removeAttributeQuotes: true,
+            },
+            filename: 'other.html',
+            chunks: ['sub'],
+        }),
+    ```
+
+4.  `resolve`的配置：
+    ```
+        resolve: { //  解析模块的可选项
+            modules: [ // 模块的查找目录
+                "node_modules",
+                path.resolve(__dirname, "app")
+            ],
+            extensions: [".js", ".json", ".jsx", ".css"], // 用到的文件的扩展
+            alias: { // 模块别名列表
+                "module": "new-module"
+                // 用到的别名：真正的路径
+            },
+        },
+    ```
+
+5.  `production mode`(生产模式) 可以开箱即用地进行各种优化。 包括压缩，作用域提升，`tree-shaking` 等。
+
+6.  对于`cacheGroups`的配置:
+    ```
+        splitChunks: {
+            chunks: 'all',
+            minSize: 50000,
+            minChunks: 2,
+            // 内部的minChunks可以覆盖这里的minChunks
+            cacheGroups: {
+                lodash: {
+                    name: 'mylodash',
+                    test: /[\\/]node_modules[\\/]lodash/,
+                    // 选择匹配的模块
+                    // 譬如第一个包打包的只有lodash，因为没匹配到react所以不会分割到这个包里
+                    minChunks: 1,
+                    priority: 10,
+                    // 打包会根据priority的大小从大到小打包
+                },
+                react: {
+                    name: 'myreact',
+                    test: /[\\/]node_modules[\\/]react/,
+                    minChunks: 1,
+                    priority: 5,
+                },
+                vendors: {
+                    name: 'myGroups',
+                    test: /[\\/]node_modules1[\\/]/,
+                    priority: -10,
+                    minChunks: 1,
+                },
+                default: {
+                    name: 'default',
+                    // 默认有个default配置，但是如果显示写出来又全都没匹配中的话会再次调用一个隐式的default
+                    minChunks: 1,
+                    priority: -20,
+                }
+            }
+        },
+    ```
+
+7.  `@babel/polyfill`
+    
+`Babel`默认只转换新的`JavaScript`句法（`syntax`），而不转换新的`API`，比如`Iterator`、`Generator`、`Set`、`Map`、`Proxy`、`Reflect`、`Symbol`、`Promise`等全局对象，以及一些定义在全局对象上的方法（比如`Object.assign`）都不会转码。
+
+举例来说，`ES6`在`Array`对象上新增了`Array.from`方法。`Babel`就不会转码这个方法。如果想让这个方法运行，必须使用`@babel-polyfill`，为当前环境提供一个垫片，使得在当前环境下可以执行该方法。
+
+27. 关于`CSS`代码
+    
+`css-loader`:负责解析 `CSS` 代码，主要是为了处理 `CSS` 中的依赖，例如 `@import` 和 `url()` 等引用外部文件的声明
+
+`style-loader` 会将 `css-loader` 解析的结果转变成 `JS` 代码，运行时动态插入 `style` 标签来让 `CSS` 代码生效。
+
+28. 
