@@ -5,7 +5,9 @@
 
     async function async1() {
         await async2()
+        console.log('1111')
         await async3()
+        console.log('222')
         await async4()
         console.log('async1 end')
     }

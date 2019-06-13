@@ -67,6 +67,7 @@ SPFA无法处理存在负权环路的问题，但是负权环路是可以在计�
                         {
                             Q.push(v);
                             enqueue_num[v]++;
+                            // 存在负权环路的情况
                             if (enqueue_num[v] >= vertex_num)
                                 return false;
                             visited[v] = 1;

@@ -16,25 +16,34 @@
     }
 
     async function async1() {
-    console.log('async1');
-    await async2();
-    console.log('async1 end');
+        console.log('async1');
+        await async2();
+        console.log('async1 end');
     }
 
     async function async2() {
-    console.log('async2');
+        console.log('async2');
     }
 
     console.log('script start');
     setTimeout(function(){
-    console.log('setTimeout');
+        console.log('setTimeout');
     },0);
     async1();
 
     new Promise((res) => {
         console.log('Promise')
+        res()
     }).then(() => {
         console.log('then')
+    }).then(() => {
+        console.log('then1')
+    }).then(() => {
+        console.log('then2')
+    }).then(() => {
+        console.log('then3')
+    }).then(() => {
+        console.log('then4')
     })
     console.log('sync end')
 
@@ -44,7 +53,12 @@
     // async2
     // Promise
     // sync end
+    // then
+    // then1
     // async1 end
+    // then2
+    // then3
+    // then4
     // timeout
     // setTimeout
 
@@ -52,7 +66,7 @@
 
 > 只有一个主线程，node开始执行脚本时，会先进事件循环初始化（同步任务，发出异步请求，规划定时器生效时间，执行promise.nextTick等），这时事件循环还未开始。
 > Node中的事件循环分为六个阶段
-> 1、timers（setTimeout，setInterval的回调）：执行二者的回调，就是去timers队列中看是否有已经到期的回调，如果有就执行他们，没有就继续进入下一个阶段
+> 1、timers（setTimeout，setInterval的回调）
 > 2、IO callbacks（除去上述两种以及setImmediate和close callback的回调）
 > 3、idle prepare 内部保留阶段
 > 4、poll 轮询
@@ -66,24 +80,24 @@
     var fs = require('fs');
 
     fs.readFile('./test.js', () => {
-    setTimeout(() => {
-        console.log('setTimeout');
-    }, 0);
-    setImmediate(() => {
-        console.log('setImmediate');
-        Promise.resolve().then(() => {
-        console.log('then1')
-        }).then(() => {
-        console.log('then11')
-        })
-        Promise.resolve().then(() => {
-        console.log('then2')
-        }).then(() => {
-        console.log('then21')
-        })
-        process.nextTick(()=>{
-        console.log('nextTick3');
-        })
+        setTimeout(() => {
+            console.log('setTimeout');
+        }, 0);
+        setImmediate(() => {
+            console.log('setImmediate');
+            Promise.resolve().then(() => {
+            console.log('then1')
+            }).then(() => {
+            console.log('then11')
+            })
+            Promise.resolve().then(() => {
+            console.log('then2')
+            }).then(() => {
+            console.log('then21')
+            })
+            process.nextTick(()=>{
+            console.log('nextTick3');
+            })
     });
 
     setImmediate(() => {
@@ -276,14 +290,14 @@
     setTimeout(() => {
         console.log('setTimeout1');
         Promise.resolve().then(() => {
-        console.log('then1')
+            console.log('then1')
         }).then(() => {
-        console.log('then11')
+            console.log('then11')
         })
         Promise.resolve().then(() => {
-        console.log('then2')
+            console.log('then2')
         }).then(() => {
-        console.log('then21')
+            console.log('then21')
         })
 
     });
