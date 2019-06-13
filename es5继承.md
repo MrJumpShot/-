@@ -91,12 +91,15 @@
 ### 4、原型式继承
 
 利用一个空对象作为中介，将某个对象直接赋值给空对象构造函数的原型。
+
     function object(obj){
         function F(){}
         F.prototype = obj;
         return new F();
     }
+
 object()对传入其中的对象执行了一次浅复制，将构造函数F的原型直接指向传入的对象。之所以要这样创造一个空对象，就是为了看后续继续添加属性的过程不会污染原来的对象
+
     var person = {
         name: "Nicholas",
         friends: ["Shelby", "Court", "Van"]
