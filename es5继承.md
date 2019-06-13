@@ -131,7 +131,7 @@ object()对传入其中的对象执行了一次浅复制，将构造函数F的�
 ```
 
 ### 5、寄生式继承
-核心：在原型式继承的基础上，增强对象，返回的也直接是一个对象
+核心：在原型式继承的基础上，增强对象，返回的也直接是一个对象，所以寄生式继承就相当于一个工厂函数，里面对被继承的对象进行加强，丢进去要继承的对象，出来一个已经加强过的新对象
 
     function createAnother(original){
         var clone = object(original); // 通过调用 object() 函数创建一个新对象
@@ -188,3 +188,28 @@ object()对传入其中的对象执行了一次浅复制，将构造函数F的�
     console.log(xiaohua_1.action);
     xiaohua_1.say();
     xiaohua_1.showScore();
+
+
+### 补充es6的extends继承
+
+extends继承的核心代码如下，其实现和上述的寄生组合式继承方式一样
+    function _inherits(subType, superType) {
+    
+        // 创建对象，创建父类原型的一个副本
+        // 增强对象，弥补因重写原型而失去的默认的constructor 属性
+        // 指定对象，将新创建的对象赋值给子类的原型
+        subType.prototype = Object.create(superType && superType.prototype, {
+            constructor: {
+                value: subType,
+                enumerable: false,
+                writable: true,
+                configurable: true
+            }
+        });
+        
+        if (superType) {
+            Object.setPrototypeOf 
+                ? Object.setPrototypeOf(subType, superType) 
+                : subType.__proto__ = superType;
+        }
+    }
