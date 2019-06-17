@@ -123,3 +123,7 @@ setState() calls happen inside a React event handler. Therefore they are always 
         })
     }
 ```
+
+## 总结
+
+我们常说的`setState`的“异步”并不是说内部由异步代码实现，其实本身执行的过程和代码都是同步的，只是合成事件和生命周期钩子函数的调用顺序在更新之前，导致在合成事件和钩子函数中没法立马拿到更新后的值，形式了所谓的“异步”，当然可以通过第二个参数 `setState(partialState, callback)` 中的`callback`拿到更新后的结果。但是在原生事件和`setTimeout`中`setState`的调用是同步执行的
