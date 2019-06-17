@@ -127,3 +127,10 @@ setState() calls happen inside a React event handler. Therefore they are always 
 ## 总结
 
 我们常说的`setState`的“异步”并不是说内部由异步代码实现，其实本身执行的过程和代码都是同步的，只是合成事件和生命周期钩子函数的调用顺序在更新之前，导致在合成事件和钩子函数中没法立马拿到更新后的值，形式了所谓的“异步”，当然可以通过第二个参数 `setState(partialState, callback)` 中的`callback`拿到更新后的结果。但是在原生事件和`setTimeout`中`setState`的调用是同步执行的
+
+> 注意：在合成事件和生命周期内的异步调用`setState`（比如`ajax`和`setTimeout`内），也是会同步更新`this.setState`。
+
+
+React的事件系统和生命周期事务前后的钩子对isBatchingUpdates做了修改，其实就是在事务的前置pre内调用了batchedUpdates方法修改了变量为true，然后在后置钩子又置为false，然后发起真正的更新检测，而事务中异步方法运行时候，由于JavaScript的异步机制，异步方法（setTimeout等）其中的setState运行时候，同步的代码已经走完，后置钩子已经把isBatchingUpdates设为false，所以此时的setState会直接进入非批量更新模式，表现在我们看来成为了同步SetState。
+
+尝试在描述一下：整个React的每个生命周期和合成事件都处在一个大的事务当中。原生绑定事件和setTimeout异步的函数没有进入React的事务当中，或者是当他们执行时，刚刚的事务已经结束了，后置钩子触发了，close了。（大家可以想一想分别是哪一种情况）。
