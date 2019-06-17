@@ -90,3 +90,36 @@ setState() calls happen inside a React event handler. Therefore they are always 
     // 结果是每次循环都打印出旧值 0
     // 渲染在页面上的是 1
 ```
+
+最后来看这样一段代码，再加深一下理解：
+
+```
+    constructor(props) {
+        super(props);
+        this.state = {
+            count: 0
+        }
+    }
+    componentDidMount() {
+    
+        this.setState({count: this.state.count + 1}, () => {
+            console.log(this.state.count)
+        })
+        this.setState({count: this.state.count + 1}, () => {
+            console.log(this.state.count)
+        })
+        this.setState({count: this.state.count + 1}, () => {
+            console.log(this.state.count)
+        })
+        // 前面三个console的结果是一致的，都是2，他们虽然调用了三次，但是他们被batch了，所以相当于只触发了一次setState
+        this.setState(pre => {
+            return {count: pre.count+1}
+        })
+        console.log(this.state.count)   // 此处的console最早触发，同步的代码，打印出的结果为1，虽然在上面有一个函数为入参的setState，但是并不意味这这个setState是同步调用的，最前面的三个调用虽然有第二个参数，但改变不了他们将被batch的命运，第二个回调函数参数的作用只是确保了这个回调函数里面得到的state是最新的，因为他们是在setState之后触发的回调，所以得到新的state是可以理解的
+        setTimeout(() => {
+            this.setState({count: this.state.count+1})
+            console.log(this.state.count)
+            // 此处的console最晚触发，打印出的是3，setTimeout调度的异步操作晚于其他的setState
+        })
+    }
+```
