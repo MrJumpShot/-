@@ -39,3 +39,54 @@ setState() calls happen inside a React event handler. Therefore they are always 
 ```
 
 同样的，在setTimeout和setInterval中也有相似的表现。
+
+```
+    constructor(props) {
+        super(props);
+        this.state = {
+            count: 0
+        }
+    }
+    componentDidMount() {
+        this.inter = setInterval(() => {
+        this.setState({
+            count: this.state.count + 1
+        })
+        console.log(this.state.count) // 1
+        this.setState({
+            count: this.state.count + 1
+        })
+        console.log(this.state.count) // 2
+        this.setState({
+            count: this.state.count + 1
+        })
+        console.log(this.state.count) // 3
+        this.setState(pre => {
+            return {
+            count: pre.count + 2
+            }
+        })
+        console.log(this.state.count)
+        }, 2000); // 5
+     }
+
+```
+
+如果上述的代码改为：
+
+```
+    componentDidMount() {
+        for ( let i = 0; i < 100; i++ ) {
+            this.setState( { num: this.state.count + 1 } );
+            console.log( this.state.count );    // 会输出什么？
+        }
+    }
+
+    render() {
+        const { count } = this.state;
+
+        return <div>{ count }</div>
+    }
+    // 结果是每次循环都打印出旧值 0
+    // 渲染在页面上的是 1
+```
