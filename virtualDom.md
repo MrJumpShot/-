@@ -2,6 +2,8 @@
 
 > `virtual DOM` 最大的特点是将页面的状态抽象为 `JS` 对象的形式，配合不同的渲染工具，使跨平台渲染成为可能。如 `React` 就借助 `virtual DOM` 实现了服务端渲染、浏览器渲染和移动端渲染等功能。
 
+> 其实`react`中对于`element`的定义就是`virtual DOM`
+
 > 此外，在进行页面更新的时候，借助`virtual DOM`，`DOM` 元素的改变可以在内存中进行比较，再结合框架的事务机制将多次比较的结果合并后一次性更新到页面，从而有效地减少页面渲染的次数，提高渲染效率。
 
 
@@ -230,13 +232,13 @@ const ATTR_KEY = '__preprops_';
 function createElement(vdom) {
     // 如果vdom是字符串或者数字类型，则创建文本节点，比如“Hello World”
     if (typeof vdom === 'string' || typeof vdom === 'number') {
-        return doc.createTextNode(vdom);
+        return document.createTextNode(vdom);
     }
 
     const {tag, props, children} = vdom;
 
     // 1. 创建元素
-    const element = doc.createElement(tag);
+    const element = document.createElement(tag);
 
     // 2. 属性赋值
     setProps(element, props);
@@ -327,7 +329,7 @@ function diffChildren(newVDom, parent) {
               vProps = vChild.props;
         let dom;
 
-        vKey = vProps!== undefined ? vProps.key : undefined;
+        vKey = vProps !== undefined ? vProps.key : undefined;
         // 根据key来查找对应元素
         if (vKey !== undefined) {
             if (nodesWithKeyCount && nodesWithKey[vKey] !== undefined) {
@@ -339,6 +341,7 @@ function diffChildren(newVDom, parent) {
         // 如果没有key字段，则找一个类型相同的元素出来做比较
         else if (min < nodesWithoutKeyCount) {
             // 个人觉得此处的j = 0是不是应该改成j = min，这样min的存在才有优化的意义，相当于缩小了每次遍历的范围，而且对于顺序没有发生变化的情况优化更明显
+            // 思考了一下确实应该这样，min只有当min处的nodes被改成undefined的时候才会进行+1的操作，所以可以保证在min的左边都是undefined
             for (let j = 0; j < nodesWithoutKeyCount; j++) {
                 const node = nodesWithoutKey[j];
                 if (node !== undefined && isSameType(node, vChild)) {
@@ -380,4 +383,105 @@ function diffChildren(newVDom, parent) {
         }
     }
 }
+```
+
+> 至此为止已经基本实现了virtual DOM的核心功能，但是还有问题就是自定义组件是如何渲染以及更新的，这是需要解决的问题，首先我们需要创建一个基类Component
+
+```
+    class Component {
+        constructor(props) {
+            this.props = props;
+            this.state = {};
+        }
+        
+        setState(newState) {
+            this.state = {...this.state, ...newState};
+            const vdom = this.render();
+            diff(this.dom, vdom, this.parent);
+        }
+
+        // 此处省去生命周期函数的实现，仅实现setState和render函数
+
+        // 若子类不实现render函数，就会追溯到基类的render函数并且报错
+        render() {
+            throw new Error('component should define its own render method')
+        }
+    };
+
+```
+
+下面来看看对于自定义组件的渲染是怎么样实现的，注意，解析自定义组件过程中得到的virtual DOM对象的tag就是自定义组件的函数名，例如：
+
+```
+    class MyComponent extends Component {}
+
+    // 编译后得到的virtual DOM对象是这样的
+    // 所以在diff的过程中可以通过typeof vDom.tag === 'function'来确认这是一个自定义组件
+    {
+        tag: MyComponent,
+        props: [...],
+        children: [...],
+    }
+```
+
+
+```
+    function diff(dom, newVDom, parent, componentInst) {
+        if (typeof newVDom == 'object' && typeof newVDom.tag == 'function') {
+            buildComponentFromVDom(dom, newVDom, parent);
+            return false;
+        }
+        
+        // 新建node
+        if (dom == undefined) {
+            const dom = createElement(newVDom);
+
+            // 自定义组件
+            if (componentInst) {
+                dom._component = componentInst;
+                dom._componentConstructor = componentInst.constructor;
+                componentInst.dom = dom;
+            }
+
+            parent.appendChild(dom);
+            return false;
+        }
+        ...
+    }
+
+    function buildComponentFromVDom(dom, vdom, parent) {
+        const cpnt = vdom.tag;
+        if (!typeof cpnt === 'function') {
+            throw new Error('vdom is not a component type');
+        }
+
+        const props = getVDomProps(vdom);
+        let componentInst = dom && dom._component;
+
+        // 创建组件
+        if (componentInst == undefined) {
+            try {
+                componentInst = new cpnt(props);
+                setTimeout(() => {componentInst.setState({name: 'Dickens'})}, 5000);
+            } catch (error) {
+                throw new Error(`component creation error: ${cpnt.name}`);
+            }
+        } 
+        // 组件更新 
+        else {
+            componentInst.props = props;
+        }
+        
+        const componentVDom = componentInst.render();
+        
+        diff(dom, componentVDom, parent, componentInst);
+    }
+
+    function getVDomProps(vdom) {
+        const props = vdom.props;
+        props.children = vdom.children;
+
+        return props;
+    }
+
 ```
