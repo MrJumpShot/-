@@ -1,15 +1,15 @@
 
 
-// const fs = require('fs');
+const fs = require('fs');
 
 
-// console.log('start')
+console.log('start')
 
-// setTimeout(() => {
-//     console.log('timeout')
-// }, 1000)
+setTimeout(() => {
+    console.log('timeout')
+}, 2100)
 
-// let start = Date.now()
+let start = Date.now()
 // setTimeout(function(){
 //     console.log('setTimeout');
 // },3000);
@@ -22,14 +22,14 @@
 // setTimeout(() => {
 //     console.log('&&&&&&&&&&&')
 // }, 0);
-// fs.readFile('./file.txt', (err, data) => {
-//     console.log('start reading1')
-//     // while(Date.now() - start < 2400) {
+fs.readFile('./file.txt', (err, data) => {
+    console.log('start reading1')
+    // while(Date.now() - start < 2400) {
 
-//     // }
-//     console.log('finished reading1')
-//     console.log(data.toString())
-// })
+    // }
+    console.log('finished reading1')
+    console.log(data.toString())
+})
 
 // // fs.readFile('./file.txt', (err, data) => {
 // //     console.log('start reading2')
@@ -40,9 +40,9 @@
 // //     // console.log(data.toString())
 // // })
 
-// while(Date.now() - start < 2000) {
+while(Date.now() - start < 2000) {
 
-// }
+}
 
 // // async function async1() {
 // //     console.log('async1');
@@ -132,18 +132,18 @@
     
 // // // }
 
-const fs = require('fs')
+// const fs = require('fs')
 
-fs.readFile('./file.txt', (err, data) => {
-    console.log(data.toString())
-})
-setImmediate(() => {
-    console.log('setImmediate')
-    setImmediate(() => {
-        console.log('setImmediate111')
-    })
-})
-let start = Date.now()
-while(Date.now() - start < 1000) {
+// fs.readFile('./file.txt', (err, data) => {
+//     console.log(data.toString())
+// })
+// setImmediate(() => {
+//     console.log('setImmediate')
+//     setImmediate(() => {
+//         console.log('setImmediate111')
+//     })
+// })
+// let start = Date.now()
+// while(Date.now() - start < 1000) {
 
-}
+// }

@@ -344,3 +344,13 @@
 
     }
 ```
+
+在stackoverflow上有一个高亮回答就是关于这个问题的，虽然很好的解释了这个问题，但是立足点好像有点问题。[传送门](https://stackoverflow.com/questions/47724811/why-setimmediate-execute-before-fs-readfile-in-nodejs-event-loops-works)
+
+这个解释的立足点是认为node事件循环的六个阶段里面的poll阶段进行事件轮询的时候只是轮询并收集已经结束的事件的回调，但是不立即执行该回调，而是将收集到的回调放进下一轮的IO callback队列中，这样就可以解释上面出现的setImmediate比readFile回调先执行的问题了，但是这个立足点有一定的问题，因为在node的文档中提到poll阶段是轮询并且执行已经完成的事件的回调的。（难道是除了IO事件以外的事件会立即执行？而IO的callback会放进下一轮循环的IO callback阶段？）
+
+所以对上面这种现象的解释是：
+
+> 出现了setimmediate在IO回调之前执行的现象，原因在于第一轮事件循环的时候IO callback队列是空的，到poll阶段之后发现有完成的IO事件，于是把IO的回调放进IO callback的队列等到下一轮执行，注意本轮poll不会执行这个回调，所以出现了这些IO回调在set immediate之后执行的现象
+
+> setImmediate总是在setTimeout之前执行，原因在于poll阶段收集了IO回调之后放进下一轮的IO callback里面，下一轮执行IOcallback的时候schedule了这两个任务，随后IO callback阶段结束，然后经过几个阶段之后先进入了check阶段，然后才进入下一轮循环执行timers的回调
