@@ -326,3 +326,21 @@
 一旦轮询队列为空，事件循环将检查已达到时间阈值的定时器。 如果一个或多个定时器准备就绪，则事件循环将回退到定时器阶段以执行这些定时器的回调。
 
 所以，虽然执行setTimeout和setInterval调度的回调函数的阶段是timers阶段，但是从技术上讲是由poll阶段来决定何时执行这些函数的，因为主线程有可能阻塞在poll阶段
+
+## TODO
+下面这段代码的执行顺序一直没搞懂，为什么先执行setImmediate后执行fs的回调？？？
+
+```
+    const fs = require('fs')
+
+    fs.readFile('./file.txt', (err, data) => {
+        console.log(data.toString())
+    })
+    setImmediate(() => {
+        console.log('setImmediate')
+    })
+    let start = Date.now()
+    while(Date.now() - start < 1000) {
+
+    }
+```
