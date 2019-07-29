@@ -19,5 +19,5 @@
 ## 如何得到一个BFC元素
 
 > 既然上文提到BFC是一块渲染区域，那这块渲染区域到底在哪，它又是有多大，这些由生成BFC的元素决定，CSS2.1中规定满足下列CSS声明之一的元素便会生成BFC。
-> 根元素float的值不为none,overflow的值不为visibledisplay的值为inline-block、table-cell、table-captionposition的值为absolute或fixed
+> 根元素float的值不为none,overflow的值不为visible，display的值为inline-block、table-cell、table-caption，position的值为absolute或fixed
 　　看到有文章中把display：table也认为可以生成BFC，其实这里的主要原因在于Table会默认生成一个匿名的table-cell，正是这个匿名的table-ccell生成了BFC
