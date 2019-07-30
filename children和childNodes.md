@@ -73,3 +73,14 @@ HTMLCollection是一个节点对象的集合，只能包含元素节点（elemen
 以及document.getElementsByTagName(),document.getElementsByClassName(),element.children()等
 
 HTMLCollection实例都是动态集合，节点的变化会实时反映在集合中
+
+## 番外
+
+关于Node.append和Node.appendChild
+
+Node.append() 与 Node.appendChild() 的差异：
+ 
+1. ParentNode.append()允许追加  DOMString 对象，而 Node.appendChild() 只接受 Node 对象。
+   变通做法：Node.appendChild(document.createTextElement('.....'))
+2. ParentNode.append() 没有返回值，而 Node.appendChild() 返回追加的 Node 对象。
+3. ParentNode.append() 可以追加几个节点和字符串，而 Node.appendChild() 只能追加一个节点。
