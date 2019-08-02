@@ -160,6 +160,25 @@
     MyPromise.prototype.catch = function(onCatch) {
         MyPromise.prototype.then(undefined, onCatch);
     }
+    
+    MyPromise.all = function(promises) {
+        function gen(times, cb) {
+            let result = [];
+            let count = 0;
+            return function(i, data) {
+                result[i] = data;
+                if(++count === times) {
+                    cb(result)
+                }
+            }
+        }
+        
+        return new MyPromise(function(res, rej) {
+            let done = gen(promises.length, res);
+            for(let i = 0; i < promises.length; i++)
+                promises[i].then(data => done(i, data), rej)
+            })
+    }
 
 
     let p = new MyPromise((res, rej) => {
