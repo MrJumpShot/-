@@ -76,6 +76,24 @@
 
         if(self.status === "resolved") {
             return new MyPromise((resolve, reject) => {
+            // 下面这里写的有问题，不应该是把回调推进数组，而是应该直接调用，推进数组的话就不会执行了
+            // 应该改成这样
+            // if (self.status === "resolved") {
+            //    return new MyPromise((resolve, reject) => {
+            //        setTimeout(function () {
+            //            try {
+            //                let x = onResolved(self.data);
+            //                if (x instanceof MyPromise) {
+            //                    x.then(resolve, reject);
+            //                } else {
+            //                    resolve(x);
+            //                }
+            //            } catch (e) {
+            //                reject(e);
+            //            }
+            //        })
+            //    })
+            // }
                 self.onResolvedCallbacks.push(function(value) {
                     try{
                         let x = onResolved(self.data);
