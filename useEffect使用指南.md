@@ -578,4 +578,8 @@ useCallback本质上是添加了一层依赖检查。它以另一种方式解决
     }
 ```
 
+### useEffect里面能不能传一个async function
+
+可以但不适合，useEffect期待的函数是一个没有返回值或者返回一个清理函数的函数，但是如果传入一个async function的话，那么这个函数的返回值就是一个promise对象，显然是不符合useEffect的要求的
+
 
