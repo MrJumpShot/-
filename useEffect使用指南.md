@@ -7,6 +7,8 @@
 
 可以这样说，在使用了useState或是useEffect这样的hooks之后，每次组件在render的时候都生成了一份本次render的state、function、effects，这些与之前或是之后的render里面的内容都是没有关系的。而对于class component来说，state是一种引用的形式。这就造成了二者在一些表现上的不同。
 
+在class component中是lifecycle主导的，而在react-hooks里面，是一种状态同步的思想，而不是lifecycle的思想
+
 来看下面这样一段代码：
 
 ```
