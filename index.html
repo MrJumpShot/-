@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+        <html>
+            <head>
+                <title>Example</title>
+                <style>
+                    #A {
+                        height: 200px;
+                        width: 200px;
+                        background: red;
+                    }
+                    #B {
+                        height: 100px;
+                        width: 100px;
+                        background: yellow;
+                    }
+                </style>
+            </head>
+            <body>
+                <div id="A">
+                    <div id="B"></div>
+                </div>
+            </body>
+            <!-- <script>
+                function fn() {
+                    console.log(this)
+                }
+                document.getElementById('B').onclick = fn
+            </script> -->
+            <script>
+                var a = document.getElementById('A'),
+                b = document.getElementById('B');    
+                function handler(e)  {
+                    console.log(this, '*****')
+                    console.log(e.target, 'target');
+                    console.log(e.currentTarget, 'currentTarget');
+                }
+                // b.addEventListener('click', handler, true);
+                // a.addEventListener('click', handler, true);
+                // b.addEventListener('click', handler, false);
+                // a.addEventListener('click', handler, false);
+                a.onclick = handler
+                b.onclick = handler
+                a.onclick = () => {
+                    console.log('hahah')
+                }
+            </script>
+        </html>
