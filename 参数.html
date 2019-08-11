@@ -1,0 +1,72 @@
+<html>
+<head>
+    <title>测试</title>
+    <meta charset="utf-8">
+    <style type="text/css">
+        *
+        {
+            margin: 0px;
+            padding: 0px;
+        }
+
+        #container
+        {
+            width: 300px;
+            height: 200px;
+            position: absolute;
+            left: 200px;
+            top: 150px;
+            margin: 15px;
+            padding: 10px;
+            overflow: auto;
+            background-color: #555;
+            border: 8px solid green;
+        }
+
+            #container p
+            {
+                background-color: pink;
+                width: 300px;
+                height: 500px;
+            }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <p id="p">
+            文字内容
+        </p>
+    </div>
+    <script type="text/javascript">
+        /*在Chrome或Firefox下查看输出*/
+        console.log('元素内样式属性（不指定则为空）style.top →→→→ ' + container.style.top)
+        console.log('元素内样式属性（不指定则为空）style.left →→→→ ' + container.style.left)
+        console.log('元素内样式属性（不指定则为空）style.width →→→→ ' + container.style.width)
+        console.log('元素内样式属性（不指定则为空）style.height →→→→ ' + container.style.height)
+
+        console.log('可见区域上边框(border属性指定) clientTop →→→→ ' + container.clientTop)
+        console.log('可见区域左边框(border属性指定) clientLeft →→→→ ' + container.clientLeft)
+
+        console.log('内容区域宽度（包括padding 20px,不包括滚动条17px，即300+20-17=303） clientWidth →→→→ ' + container.clientWidth)
+        console.log('可见区域宽度（包括padding 20px 和border 16px 滚动条在其内部，没有产生额外长度）offsetWidth →→→→ ' + container.offsetWidth)
+        console.log('内容区域高度（包括padding 20px） clientHeight →→→→ ' + container.clientHeight)
+        console.log('可见区域高度（包括padding 20px和border 16px 滚动条在其内部，没有产生额外长度） offsetHeight →→→→ ' + container.offsetHeight)
+
+        console.log('与上层或外层偏移（包括margin 15px） offsetTop →→→→ ' + container.offsetTop)
+        console.log('与左层或外层偏移（包括margin 15px）  offsetLeft →→→→ ' + container.offsetLeft)
+
+        console.log('已经滚动的距离（只有出现滚动条才有效，否则均为0）scrollTop →→→→ ' + container.scrollTop)
+        console.log('已经滚动的距离（只有出现滚动条才有效，否则均为0）scrollLeft →→→→ ' + container.scrollLeft)
+        console.log('滚动条最大滚动距离（即隐藏的部分的高度） scrollTopMax →→→→ ' + container.scrollTopMax)
+        console.log('滚动对象的完整宽度（至少是元素宽度） scrollWidth →→→→ ' + container.scrollWidth)
+        console.log('滚动对象的完整高度（至少是元素高度） scrollHeight →→→→ ' + container.scrollHeight)
+
+        console.log('screen.top →→→→ ' + window.screen.top);
+        console.log('screen.left →→→→ ' + window.screen.left);
+        console.log('screen.height →→→→ ' + window.screen.height);
+        console.log('screen.width →→→→ ' + window.screen.width);
+        console.log('screen.availHeight →→→→ ' + window.screen.availHeight);
+        console.log('screen.availWidth →→→→ ' + window.screen.availWidth);
+    </script>
+</body>
+</html>
