@@ -9,6 +9,12 @@
             padding: 0px;
         }
 
+        html {
+            position: relative;
+            left: 300px;
+            top: 300px;
+        }
+
         #container
         {
             width: 300px;
@@ -38,6 +44,22 @@
         </p>
     </div>
     <script type="text/javascript">
+        document.onclick = function(e) {
+            console.log(e.clientX, e.clientY)
+        }
+        // 测试发现对于clientX和clientY是相对于浏览器的左上角的坐标，而不是相对于显示器的左上角
+
+        // 滚动条的宽度是占据了本身的padding和width区域，而不是新开辟出空间给滚动条的
+
+        /*
+            clientWidth => contentWidth + padding - 滚动条宽度(可见部分的，不包括overflow的)
+            offsetWidth => contentWidth + padding + border(可见部分的，不包括overflow的)
+            scrollWidth/scrollHeight => 元素完整的高度和宽度，overflow:hidden的部分也计算在内。
+            offsetLeft/offsetTop => 当前元素距浏览器边界的偏移量，以像素为单位。(此处应该有错误，当给html元素设置偏移之后，子元素的offsetLeft和offsetTop都没有发生变化，说明其实是相对于html元素的偏移)
+            clientTop/clientLeft => 这个属性测试下来的结果就是border。
+            scrollLeft/scrollTop => 设置或返回已经滚动到元素的左边界或上边界的像素数。
+
+        */
         /*在Chrome或Firefox下查看输出*/
         console.log('元素内样式属性（不指定则为空）style.top →→→→ ' + container.style.top)
         console.log('元素内样式属性（不指定则为空）style.left →→→→ ' + container.style.left)
