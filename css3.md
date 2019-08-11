@@ -56,3 +56,33 @@ opacity  1 => 不透明  0 => 透明
 
 ## 9. 选择器
 
+
+## 番外
+
+1. 隐藏元素的方式
+  
+    * `display: none`: 元素在页面上将彻底消失，元素本来占有的空间就会被其他元素占有，也就是说它会导致浏览器的重排和重绘。不会触发其点击事件
+    * `visibility: hidden`: 和`display:none`的区别在于，元素在页面消失后，其占据的空间依旧会保留着，所以它只会导致浏览器重绘而不会重排。无法触发其点击事件
+    * `opacity:0`: 和visibility:hidden的一个共同点是元素隐藏后依旧占据着空间，但我们都知道，设置透明度为0后，元素只是隐身了，它依旧存在页面中。可以触发点击事件
+
+2. 关于em
+   
+   ```
+    <style>
+        .parent {
+            font-size: 20px;
+        }
+
+        .child {
+            font-size: 2em; // 40px
+            padding: 2em; // 8opx
+        }
+    </style>
+    <body>
+        <div class="parent">
+            <div class="child"></div>
+        </div>
+    </body>
+   ```
+
+   从上面可以发现，所谓的继承父级元素的font-size指的是，子级元素的font-size先继承自父级元素，如果单位是em就相对父级元素先计算出子级元素的font-size，然后计算子级元素的其他尺寸，其他尺寸是相对计算出的子级元素的font-size来计算的
