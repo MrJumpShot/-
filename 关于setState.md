@@ -72,3 +72,117 @@
 > 接下来的解释就顺理成章了，因为在 componentDidMount 中调用 setState 时，batchingStrategy 的 isBatchingUpdates 已经被设为 true，所以两次 setState 的结果并没有立即生效，而是被放进了 dirtyComponents 中。这也解释了两次打印this.state.val 都是 0 的原因，新的 state 还没有被应用到组件中。
 
 > 再反观 setTimeout 中的两次 setState，因为没有前置的 batchedUpdate 调用，所以 batchingStrategy 的 isBatchingUpdates 标志位是 false，也就导致了新的 state 马上生效，没有走到 dirtyComponents 分支。也就是，setTimeout 中第一次 setState 时，this.state.val 为 1，而 setState 完成后打印时 this.state.val 变成了 2。第二次 setState 同理。
+
+
+## 注意
+
+### case 1
+
+```
+    class Clock extends React.Component {
+        constructor(props) {
+            super(props);
+            this.state = {
+            count: 0
+            }
+        }
+        
+        componentDidMount() {
+            
+            this.setState({count: this.state.count + 1}, (a) => {
+                console.log(this.state.count)  // -> 6
+            })
+            this.setState({count: this.state.count + 1}, () => {
+                console.log(this.state.count)  // -> 7
+            })
+            this.setState({count: this.state.count + 1}, () => {
+                console.log(this.state.count)  // -> 8
+            })
+            this.setState(pre => {
+                console.log('function')  // -> 3
+                return {
+                    count: pre.count+1
+                }
+            })
+            this.setState(pre => {
+                console.log('function1')  // -> 4
+                return {
+                    count: pre.count+1
+                }
+            })
+            console.log('sync')  // -> 2
+        }
+        render() {
+            console.log('render')  // -> 1 -> 6
+            return (
+            <div>
+                <h1>Hello, world1!</h1>
+                <h2>{this.state.count}</h2>
+            </div>
+            );
+        }
+    }
+    // 组件从挂载到更新，console里面输出的顺序是这样的
+    // render -> sync -> function -> function1 -> render -> 3 -> 3 -> 3
+
+
+```
+
+结论：
+
+* setState({}, callback)这种形式的setState会被batch，而且回调函数是在render之后执行
+* setState((preState) => {})这种形式不会被batch，但是代码不会同步执行，会等到所有的同步代码执行之后再同步执行这些setState，在render之前执行，因为setState之后才会render，上面那种形式的setState也是在render之前执行，但是回调在render之后执行
+
+
+
+### case 2
+
+```
+    class Clock extends React.Component {
+        constructor(props) {
+            super(props);
+            this.state = {
+            count: 0
+            }
+        }
+        
+        componentDidMount() {
+            setTimeout(() => {
+                this.setState({count: this.state.count + 1}, (a) => {
+                    console.log(this.state.count)
+                })
+                this.setState({count: this.state.count + 1}, () => {
+                    console.log(this.state.count)
+                })
+                this.setState({count: this.state.count + 1}, () => {
+                    console.log(this.state.count)
+                })
+                this.setState(pre => {
+                    console.log('function')
+                    return {
+                        count: pre.count+1
+                    }
+                })
+                this.setState(pre => {
+                    console.log('function1')
+                    return {
+                        count: pre.count+1
+                    }
+                })
+                console.log('sync')
+            })
+        }
+        render() {
+            console.log('render')
+            return (
+            <div>
+                <h1>Hello, world1!</h1>
+                <h2>{this.state.count}</h2>
+            </div>
+            );
+        }
+    }
+
+    // 输出顺序为: render -> render -> 1 -> render -> 2 -> render -> 3 -> function -> render -> function1 -> render -> sync
+    // 在setTimeout里面所有的setState都同步执行
+```
