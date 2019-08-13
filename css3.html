@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>css阻塞</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+    body {
+        height: 3000px;
+        background: pink;
+    }
+    .container {
+        height: 800px;
+        width: 500px;
+        background: aqua;
+        position: relative;
+        top: 1000px;
+    }
+    #d {
+        height: 300px;
+        width: 300px;
+        background: yellow;
+        border: 20px solid green;
+        /* margin: 100px; */
+        position: sticky;
+        bottom: 0;
+        padding: 50px;
+    }
+      #son {
+        
+        background: red;
+        height: 100px;
+        width: 100px;
+        position: absolute;
+        /* absolute定位后，子元素的margin左上角相对于父元素的padding内侧左上角定位*/
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: auto;
+      }
+      .parent {
+            font-size: 20px;
+        }
+
+        .child {
+            width: 200px;
+            height: 200px;
+            font-size: 2em;
+            padding: 2em;
+            border: 1px solid red;
+        }
+    </style>
+    
+  </head>
+  <body>
+      <div class="container">
+            <div id="d">
+                    <div id='son'></div>
+              </div>
+      </div>
+      <div class="parent">
+        <div class="child">haha</div>
+      </div>
+  </body>
+</html>
