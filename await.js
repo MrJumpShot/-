@@ -1,10 +1,15 @@
 async function async1() {
     console.log('async1 start');
     await async2();
-    console.log('async1 end');
+    console.log('async1 end111');
+    await async3();
+    console.log('async1 end222');
 }
 async function async2() {
     console.log('async2');
+}
+async function async3() {
+    console.log('async3');
 }
 console.log('script start');
 setTimeout(function() {
@@ -20,6 +25,12 @@ new Promise(function(resolve) {
     console.log('promise3');
 }).then(function() {
     console.log('promise4');
+}).then(function() {
+    console.log('promise5');
+}).then(function() {
+    console.log('promise6');
+}).then(function() {
+    console.log('promise7');
 });
 console.log('script end');
 
