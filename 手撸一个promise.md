@@ -180,6 +180,8 @@
             })
     }
 
+    // 关于Promise的race的实现是通过再new出一个Promise，让所有的promises在这个新的promise里面执行，而且传入这些promise的入参函数的入参就是外层的resolve和reject函数，哪个promise结束了就可以直接导致外层的结束
+
 
     let p = new MyPromise((res, rej) => {
         setTimeout(() => {
