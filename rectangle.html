@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+        <html>
+            <head>
+                <title>Example</title>
+                <style>
+                    #A {
+                        width: 200px;
+                        height: 400px;
+                        background: red;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                    }
+                    #B {
+                        /* height: 0; */
+                        width: 50%;
+                        /* padding-top: 50%;  */
+                        background: yellow;
+                        /* overflow: hidden; */
+                    }
+                    #B:after {
+                        content: '';
+                        display: block;
+                        margin-top: 100%;
+                    }
+                </style>
+            </head>
+            <body>
+                <div id="A">
+                    <div id="B"></div>
+                </div>
+            </body>
+            
+        </html>
