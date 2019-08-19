@@ -62,3 +62,33 @@
         // padding-top设置百分比时相对于非static定位的父级的宽度
     }
 ```
+
+## 4.
+
+```
+    function Foo() {
+        getValue = function() {     
+            console.log(1)     
+        }     
+        // 注意上面这行的赋值没有使用var或者let，那么一旦执行Foo()就会覆盖全局的getValue函数
+        return this;
+    } 
+    Foo.getValue = function() {     
+        console.log(2) 
+    } 
+    Foo.prototype.getValue = function() {     
+        console.log(3) 
+    }  
+    function getValue() {     
+        console.log(4) 
+    } 
+    getValue = function() {     
+        console.log(5) 
+    } 
+    Foo.getValue(); 
+    Foo().getValue(); // 先执行Foo(),返回的this指向window，同时把全局的getValue函数改成了Foo内部赋值的那个，所以这里和后面打出来的都是1
+    getValue();
+
+    // 如果注掉Foo().getValue();这一行，那么最后一行打出来的是5
+
+```
