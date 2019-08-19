@@ -58,7 +58,7 @@
     .child {
         width: 50%;
         height: 0;
-        padding-top: 100%;
+        padding-top: 50%;
         // padding-top设置百分比时相对于非static定位的父级的宽度
     }
 ```
