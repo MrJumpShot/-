@@ -31,7 +31,7 @@ component是我们编写出来的自定义组件，React可以通过React.create
 
 ## instance
 
-instance是组件的实例，但是注意function形式的component没有实例，无法在function形式的component内部使用this，也无法在这个component的属性里面写ref属性
+instance是组件的实例，但是注意function形式的component没有实例，也没有生命周期，无法在function形式的component内部使用this，也无法在这个component的属性里面写ref属性
 
 ## 补充：
 由于传统的UI编程返回的直接就是DOM对象，而在服务端是不存在DOM的，所以进行前后端同构不方便，但是在react中返回的是一个对象形式的element，也就是virtual DOM，这种对象在前后端都是可以共用的，这也为前后端同构提供有力的工具
