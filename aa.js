@@ -1,28 +1,52 @@
-const reverse = arr => {
-    let indexArr = [];
-    let len = arr.length;
-    for(let i = 0; i < len; i++) {
-        if(arr[i] === ' ') {
-            indexArr.push(i);
-        }
+console.log('script start')
+
+    async function async1() {
+        await async2()
+        console.log('1111')
+        await async3()
+        console.log('222')
+        await async4()
+        console.log('async1 end')
     }
-    let indexArrLen = indexArr.length;
-    if(!indexArrLen) return arr;
-    indexArr.unshift(-1);
-    indexArr.push(len);
-    let ans = [];
-    for(let i = indexArrLen; i >= 0; i--) {
-        for(let j = indexArr[i] + 1; j < indexArr[i+1]; j++) {
-            ans.push(arr[j]);
-        }
-        ans.push(' ');
+
+    async function async2() {
+        console.log('async2 end')
     }
-    ans.pop();
-    return ans;
-}
+    async function async3() {
+        console.log('async3 end')
+    }
+    async function async4() {
+        console.log('async4 end')
+    }
+    async1()
 
-let test = ['n', 'i', 'c', 'e', ' ', 's', 'o', ' ', 'i', 's', ' ', 'h', 'e', ];
+    setTimeout(function() {
+        console.log('setTimeout')
+    }, 0)
 
-let result = reverse(test);
+    new Promise(resolve => {
+        console.log('Promise')
+        resolve()
+    }).then(() => {
+        console.log('promise1')
+    }).then(() => {
+        console.log('promise2')
+    }).then(() => {
+        console.log('promise3')
+    }).then(() => {
+        console.log('promise4')
+    }).then(() => {
+        console.log('promise5')
+    }).then(() => {
+        console.log('promise6')
+    }).then(() => {
+        console.log('promise7')
+    }).then(() => {
+        console.log('promise8')
+    }).then(() => {
+        console.log('promise9')
+    }).then(() => {
+        console.log('promise10')
+    })
 
-console.log(result)
+    console.log('script end')

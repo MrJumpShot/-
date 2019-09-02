@@ -55,14 +55,16 @@
     console.log('script end')
 
 ```
-> 上面这样一段代码，在v8引擎的环境下执行得到的结果是这样的：
+> 上面这样一段代码，在浏览器环境下执行得到的结果是这样的：
 ```
     script start
     async2 end
     Promise
     script end
+    1111
     async3 end
     promise1
+    222
     async4 end
     promise2
     async1 end
@@ -84,10 +86,12 @@
     script end
     promise1
     promise2
+    1111
     async3 end
     promise3
     promise4
     promise5
+    222
     async4 end
     promise6
     promise7
@@ -101,6 +105,6 @@
 > 若将后面几个async函数改为普通函数，则二者的执行结果相同
 > 产生这样的原因：
 
-> V8引擎在碰到await时，如果await后面跟的是promise对象，则直接执行该内容，但是在这一行后面的内容都将被放进一个微任务内。如果await后面是一个普通函数时，则继续执行后面的内容，不必将后面的内容放进微任务
+> 浏览器在碰到await时，如果await后面跟的是promise对象，则直接执行该内容，但是在这一行后面的内容都将被放进一个微任务内。如果await后面是一个普通函数时，则继续执行后面的内容，不必将后面的内容放进微任务
 
-> node引擎在处理await后面是普通函数的方式与V8引擎是一样的，都是直接执行，但是在执行await后面是promise对象的时候，则会将后面的内容多次放进微任务中，从输出的结果看，应该是三次放进微任务中
+> node在处理await后面是普通函数的方式与浏览器是一样的，都是直接执行，但是在执行await后面是promise对象的时候，则会将后面的内容多次放进微任务中，从输出的结果看，应该是三次放进微任务中
